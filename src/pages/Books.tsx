@@ -23,7 +23,7 @@ const Books = () => {
   const { isAuthenticated } = useAuth();
   
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedGenre, setSelectedGenre] = useState<string>("");
+  const [selectedGenre, setSelectedGenre] = useState<string>("all");
   const [sortBy, setSortBy] = useState<string>("title");
   const [isAscending, setIsAscending] = useState(true);
   
@@ -38,7 +38,7 @@ const Books = () => {
     queryParams.filterQuery = searchTerm;
   }
   
-  if (selectedGenre) {
+  if (selectedGenre && selectedGenre !== "all") {
     queryParams.filterOn = "bookGenre";
     queryParams.filterQuery = selectedGenre;
   }
@@ -123,7 +123,7 @@ const Books = () => {
                 <SelectValue placeholder="Filter by genre" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Genres</SelectItem>
+                <SelectItem value="all">All Genres</SelectItem>
                 {Object.values(Genre).map(genre => (
                   <SelectItem key={genre} value={genre}>{genre}</SelectItem>
                 ))}

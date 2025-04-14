@@ -72,7 +72,7 @@ const Borrowings = () => {
   const { user } = useAuth();
   const isAdmin = user?.userRole === "Admin";
   
-  const [statusFilter, setStatusFilter] = useState<string>("");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
   
   // Query params for the API
   const queryParams: QueryParams = {
@@ -82,7 +82,7 @@ const Borrowings = () => {
   };
   
   // Add filters if we have them
-  if (statusFilter) {
+  if (statusFilter && statusFilter !== "all") {
     queryParams.filterOn = "status";
     queryParams.filterQuery = statusFilter;
   }
@@ -197,7 +197,7 @@ const Borrowings = () => {
               <SelectValue placeholder="Filter by status" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Statuses</SelectItem>
+              <SelectItem value="all">All Statuses</SelectItem>
               {Object.values(BorrowingStatus).map(status => (
                 <SelectItem key={status} value={status}>{status}</SelectItem>
               ))}
