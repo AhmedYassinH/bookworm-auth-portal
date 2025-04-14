@@ -20,6 +20,10 @@ import Authors from "./pages/Authors";
 import Publishers from "./pages/Publishers";
 import Borrowings from "./pages/Borrowings";
 import Dashboard from "./pages/Dashboard";
+import AboutUs from "./pages/AboutUs";
+import FAQ from "./pages/FAQ";
+import TermsOfService from "./pages/TermsOfService";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 
 // Components
 import PrivateRoute from "./components/auth/PrivateRoute";
@@ -39,6 +43,10 @@ const App = () => (
             <Route path="/register" element={<Register />} />
             <Route path="/books" element={<Books />} />
             <Route path="/books/:id" element={<BookDetails />} />
+            <Route path="/about" element={<AboutUs />} />
+            <Route path="/faq" element={<FAQ />} />
+            <Route path="/terms" element={<TermsOfService />} />
+            <Route path="/privacy" element={<PrivacyPolicy />} />
             
             {/* Protected routes */}
             <Route 
