@@ -4,13 +4,27 @@ import {
   AuthResponseDTO, 
   LoginUserRequestDTO, 
   RegisterUserRequestDTO,
-  UpdatePasswordRequestDTO
+  UpdatePasswordRequestDTO,
+  Role
 } from "../types/auth";
 
 const AUTH_ENDPOINTS = {
   REGISTER: "/Auth/Register",
   LOGIN: "/Auth/Login",
   CHANGE_PASSWORD: "/Auth/ChangePassword",
+};
+
+// Dummy admin credentials
+const DUMMY_ADMIN = {
+  email: "admin@bookworm.com",
+  password: "Admin123!",
+  userData: {
+    userId: 1,
+    userName: "Admin User",
+    userRole: Role.Admin,
+    imageUrl: null,
+    accessToken: "dummy-token-for-development"
+  }
 };
 
 export const authService = {
@@ -23,6 +37,15 @@ export const authService = {
   },
 
   login: async (data: LoginUserRequestDTO): Promise<AuthResponseDTO> => {
+    // For development: check if using dummy admin credentials
+    if (data.email === DUMMY_ADMIN.email && data.password === DUMMY_ADMIN.password) {
+      console.log("Using dummy admin account for development");
+      const userData = { ...DUMMY_ADMIN.userData };
+      authService.saveUserData(userData);
+      return userData;
+    }
+    
+    // Regular login flow
     return apiRequest<AuthResponseDTO>({
       method: "POST",
       url: AUTH_ENDPOINTS.LOGIN,
