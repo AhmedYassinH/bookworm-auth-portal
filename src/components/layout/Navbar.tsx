@@ -201,7 +201,8 @@ const Navbar = () => {
                   Log out
                 </button>
               </>
-            ) : (
+            )}
+            {!isAuthenticated && (
               <div className="flex flex-col space-y-2 p-2">
                 <Link to="/login" onClick={() => setMobileMenuOpen(false)}>
                   <Button variant="outline" className="w-full">Log in</Button>
