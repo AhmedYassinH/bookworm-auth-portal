@@ -1,0 +1,28 @@
+
+import { BookResponseDTO } from "@/types/book";
+import BookCard from "./BookCard";
+
+interface BookGridProps {
+  books: BookResponseDTO[];
+  onBorrow?: (bookId: number) => void;
+}
+
+const BookGrid = ({ books, onBorrow }: BookGridProps) => {
+  if (!books || books.length === 0) {
+    return (
+      <div className="flex items-center justify-center h-40 bg-muted/20 rounded-lg">
+        <p className="text-muted-foreground">No books found</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+      {books.map(book => (
+        <BookCard key={book.id} book={book} onBorrow={onBorrow} />
+      ))}
+    </div>
+  );
+};
+
+export default BookGrid;

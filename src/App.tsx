@@ -12,6 +12,12 @@ import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import ChangePassword from "./pages/ChangePassword";
+import Books from "./pages/Books";
+import BookDetails from "./pages/BookDetails";
+import Authors from "./pages/Authors";
+import Publishers from "./pages/Publishers";
+import Borrowings from "./pages/Borrowings";
+import Dashboard from "./pages/Dashboard";
 
 // Components
 import PrivateRoute from "./components/auth/PrivateRoute";
@@ -29,6 +35,10 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/books" element={<Books />} />
+            <Route path="/books/:id" element={<BookDetails />} />
+            
+            {/* Protected routes */}
             <Route 
               path="/change-password" 
               element={
@@ -37,6 +47,39 @@ const App = () => (
                 </PrivateRoute>
               } 
             />
+            <Route 
+              path="/authors" 
+              element={
+                <PrivateRoute>
+                  <Authors />
+                </PrivateRoute>
+              } 
+            />
+            <Route 
+              path="/publishers" 
+              element={
+                <PrivateRoute>
+                  <Publishers />
+                </PrivateRoute>
+              } 
+            />
+            <Route 
+              path="/borrowings" 
+              element={
+                <PrivateRoute>
+                  <Borrowings />
+                </PrivateRoute>
+              } 
+            />
+            <Route 
+              path="/dashboard" 
+              element={
+                <PrivateRoute>
+                  <Dashboard />
+                </PrivateRoute>
+              } 
+            />
+            
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
