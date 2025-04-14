@@ -42,7 +42,7 @@ const getBadgeVariant = (status: BorrowingStatus) => {
     case BorrowingStatus.Rejected:
       return "destructive";
     case BorrowingStatus.Returned:
-      return "success";
+      return "secondary"; // Changed from "success" to "secondary" which is a valid variant
     default:
       return "outline";
   }
