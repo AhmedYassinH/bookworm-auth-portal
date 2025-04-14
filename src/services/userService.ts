@@ -1,6 +1,8 @@
 
 import { apiRequest } from './api';
 import { UserResponseDTO } from '@/types/user';
+import { Role } from '@/types/auth';
+import { Sex } from '@/types/user';
 import { QueryParams } from '@/types/base';
 
 // User API endpoints
@@ -18,11 +20,11 @@ const mockUserData: UserResponseDTO = {
   birthDate: "1990-01-01",
   imageURL: null,
   address: "123 Book Street, Reading, RD 12345",
-  userSex: "Male",
+  userSex: Sex.Male,
   credit: 100,
   email: "john.doe@example.com",
   phone: "+1234567890",
-  userRole: "User",
+  userRole: Role.User,
   createdAt: new Date().toISOString()
 };
 
@@ -84,3 +86,4 @@ export const userService = {
 };
 
 export default userService;
+
