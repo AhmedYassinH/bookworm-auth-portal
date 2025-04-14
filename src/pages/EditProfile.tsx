@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -54,10 +53,10 @@ const EditProfile = () => {
   const queryClient = useQueryClient();
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
-  
+
   // Fetch user details
   const { data: profile, isLoading } = useQuery({
-    queryKey: ['user', user?.userId],
+    queryKey: ["user", user?.userId],
     queryFn: () => userService.getUser(user?.userId || 0),
     enabled: !!user?.userId,
   });
@@ -85,10 +84,10 @@ const EditProfile = () => {
         bio: profile.bio || "",
         address: profile.address || "",
         phone: profile.phone || "",
-        birthDate: profile.birthDate?.split('T')[0] || "",
+        birthDate: profile.birthDate?.split("T")[0] || "",
         userSex: profile.userSex || Sex.Male,
       });
-      
+
       if (profile.imageURL) {
         setImagePreview(profile.imageURL);
       }
@@ -99,34 +98,43 @@ const EditProfile = () => {
   const updateProfileMutation = useMutation({
     mutationFn: async (data: ProfileFormValues) => {
       if (!user?.userId) throw new Error("User ID not found");
-      
+
       const formData = new FormData();
+      // Required fields
       formData.append("Name", data.name);
       formData.append("Email", data.email);
-      if (data.bio) formData.append("Bio", data.bio);
-      if (data.address) formData.append("Address", data.address);
-      if (data.phone) formData.append("Phone", data.phone);
-      if (data.birthDate) formData.append("BirthDate", data.birthDate);
-      formData.append("UserSex", data.userSex);
-      if (imageFile) formData.append("Image", imageFile);
+      formData.append("UserSex", data.userSex.toString());
+
+      // Optional fields - send empty string if not provided to match API schema
+      formData.append("Bio", data.bio || "");
+      formData.append("Address", data.address || "");
+      formData.append("Phone", data.phone || "");
+      formData.append("BirthDate", data.birthDate || "");
+
+      // Required for concurrency control
       if (profile?.id) formData.append("Id", profile.id.toString());
       if (profile?.timeStamp) formData.append("TimeStamp", profile.timeStamp);
-      
+
+      // Image is optional but needs to be sent as binary
+      if (imageFile) formData.append("Image", imageFile);
+
       return userService.updateUser(user.userId, formData);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['user', user?.userId] });
+      queryClient.invalidateQueries({ queryKey: ["user", user?.userId] });
       toast({
         title: "Profile updated",
         description: "Your profile has been successfully updated.",
       });
       navigate("/profile");
     },
-    onError: (error) => {
+    onError: (error: { response?: { data?: { message?: string } } }) => {
       console.error("Failed to update profile:", error);
       toast({
         title: "Update failed",
-        description: "There was a problem updating your profile. Please try again.",
+        description:
+          error?.response?.data?.message ||
+          "There was a problem updating your profile. Please try again.",
         variant: "destructive",
       });
     },
@@ -136,7 +144,7 @@ const EditProfile = () => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       setImageFile(file);
-      
+
       // Create a preview
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -163,15 +171,15 @@ const EditProfile = () => {
   return (
     <Layout>
       <div className="container max-w-xl mx-auto py-8 px-4">
-        <Button 
-          variant="ghost" 
-          className="mb-4" 
+        <Button
+          variant="ghost"
+          className="mb-4"
           onClick={() => navigate("/profile")}
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
           Back to Profile
         </Button>
-        
+
         <Card>
           <CardHeader>
             <CardTitle>Edit Profile</CardTitle>
@@ -200,9 +208,12 @@ const EditProfile = () => {
                 </label>
               </div>
             </div>
-            
+
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-4"
+              >
                 <FormField
                   control={form.control}
                   name="name"
@@ -216,7 +227,7 @@ const EditProfile = () => {
                     </FormItem>
                   )}
                 />
-                
+
                 <FormField
                   control={form.control}
                   name="email"
@@ -224,13 +235,17 @@ const EditProfile = () => {
                     <FormItem>
                       <FormLabel>Email</FormLabel>
                       <FormControl>
-                        <Input type="email" placeholder="Your email" {...field} />
+                        <Input
+                          type="email"
+                          placeholder="Your email"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-                
+
                 <FormField
                   control={form.control}
                   name="phone"
@@ -244,7 +259,7 @@ const EditProfile = () => {
                     </FormItem>
                   )}
                 />
-                
+
                 <FormField
                   control={form.control}
                   name="address"
@@ -258,7 +273,7 @@ const EditProfile = () => {
                     </FormItem>
                   )}
                 />
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <FormField
                     control={form.control}
@@ -273,14 +288,14 @@ const EditProfile = () => {
                       </FormItem>
                     )}
                   />
-                  
+
                   <FormField
                     control={form.control}
                     name="userSex"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Sex</FormLabel>
-                        <Select 
+                        <Select
                           onValueChange={field.onChange}
                           defaultValue={field.value}
                           value={field.value}
@@ -300,7 +315,7 @@ const EditProfile = () => {
                     )}
                   />
                 </div>
-                
+
                 <FormField
                   control={form.control}
                   name="bio"
@@ -318,7 +333,7 @@ const EditProfile = () => {
                     </FormItem>
                   )}
                 />
-                
+
                 <div className="flex justify-end space-x-4 pt-4">
                   <Button
                     type="button"
@@ -327,7 +342,7 @@ const EditProfile = () => {
                   >
                     Cancel
                   </Button>
-                  <Button 
+                  <Button
                     type="submit"
                     disabled={updateProfileMutation.isPending}
                   >
