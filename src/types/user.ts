@@ -23,3 +23,5 @@ export interface UserResponseDTO {
   userRole: Role;
   createdAt: string;
 }
+
+export { Sex };

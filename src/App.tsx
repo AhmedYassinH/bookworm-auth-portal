@@ -12,6 +12,8 @@ import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import ChangePassword from "./pages/ChangePassword";
+import Profile from "./pages/Profile";
+import EditProfile from "./pages/EditProfile";
 import Books from "./pages/Books";
 import BookDetails from "./pages/BookDetails";
 import Authors from "./pages/Authors";
@@ -39,6 +41,22 @@ const App = () => (
             <Route path="/books/:id" element={<BookDetails />} />
             
             {/* Protected routes */}
+            <Route 
+              path="/profile" 
+              element={
+                <PrivateRoute>
+                  <Profile />
+                </PrivateRoute>
+              } 
+            />
+            <Route 
+              path="/edit-profile" 
+              element={
+                <PrivateRoute>
+                  <EditProfile />
+                </PrivateRoute>
+              } 
+            />
             <Route 
               path="/change-password" 
               element={

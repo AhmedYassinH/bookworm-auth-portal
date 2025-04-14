@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
-import { Menu, X, BookOpen, LogOut, User } from "lucide-react";
+import { Menu, X, BookOpen, LogOut, User, Settings } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -41,17 +41,19 @@ const Navbar = () => {
               Home
             </Link>
             <Link
-              to="/about"
-              className="text-gray-700 hover:text-bookworm-500 px-3 py-2 rounded-md text-sm font-medium"
-            >
-              About
-            </Link>
-            <Link
               to="/books"
               className="text-gray-700 hover:text-bookworm-500 px-3 py-2 rounded-md text-sm font-medium"
             >
               Books
             </Link>
+            {isAuthenticated && (
+              <Link
+                to="/borrowings"
+                className="text-gray-700 hover:text-bookworm-500 px-3 py-2 rounded-md text-sm font-medium"
+              >
+                My Borrowings
+              </Link>
+            )}
 
             {isAuthenticated ? (
               <DropdownMenu>
@@ -84,6 +86,20 @@ const Navbar = () => {
                       <span>Profile</span>
                     </Link>
                   </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/change-password" className="cursor-pointer">
+                      <Settings className="mr-2 h-4 w-4" />
+                      <span>Change Password</span>
+                    </Link>
+                  </DropdownMenuItem>
+                  {user?.userRole === "Admin" && (
+                    <DropdownMenuItem asChild>
+                      <Link to="/dashboard" className="cursor-pointer">
+                        <Settings className="mr-2 h-4 w-4" />
+                        <span>Admin Dashboard</span>
+                      </Link>
+                    </DropdownMenuItem>
+                  )}
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
                     className="cursor-pointer text-red-600 focus:text-red-600"
@@ -136,13 +152,6 @@ const Navbar = () => {
               Home
             </Link>
             <Link
-              to="/about"
-              className="text-gray-700 hover:text-bookworm-500 block px-3 py-2 rounded-md text-base font-medium"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              About
-            </Link>
-            <Link
               to="/books"
               className="text-gray-700 hover:text-bookworm-500 block px-3 py-2 rounded-md text-base font-medium"
               onClick={() => setMobileMenuOpen(false)}
@@ -150,8 +159,15 @@ const Navbar = () => {
               Books
             </Link>
             
-            {isAuthenticated ? (
+            {isAuthenticated && (
               <>
+                <Link
+                  to="/borrowings"
+                  className="text-gray-700 hover:text-bookworm-500 block px-3 py-2 rounded-md text-base font-medium"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  My Borrowings
+                </Link>
                 <Link
                   to="/profile"
                   className="text-gray-700 hover:text-bookworm-500 block px-3 py-2 rounded-md text-base font-medium"
@@ -159,6 +175,22 @@ const Navbar = () => {
                 >
                   Profile
                 </Link>
+                <Link
+                  to="/change-password"
+                  className="text-gray-700 hover:text-bookworm-500 block px-3 py-2 rounded-md text-base font-medium"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Change Password
+                </Link>
+                {user?.userRole === "Admin" && (
+                  <Link
+                    to="/dashboard"
+                    className="text-gray-700 hover:text-bookworm-500 block px-3 py-2 rounded-md text-base font-medium"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Admin Dashboard
+                  </Link>
+                )}
                 <button
                   onClick={() => {
                     logout();
