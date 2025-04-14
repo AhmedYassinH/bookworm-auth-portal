@@ -1,4 +1,3 @@
-
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
@@ -199,8 +198,8 @@ const BookDetails = () => {
                       {book.publishers.map(publisher => (
                         <li key={publisher.id} className="p-3 bg-muted rounded-lg">
                           <p className="font-medium">{publisher.name}</p>
-                          {publisher.contactInfo && (
-                            <p className="text-sm text-muted-foreground mt-1">{publisher.contactInfo}</p>
+                          {(publisher.email || publisher.address) && (
+                            <p className="text-sm text-muted-foreground mt-1">{publisher.email || publisher.address}</p>
                           )}
                         </li>
                       ))}

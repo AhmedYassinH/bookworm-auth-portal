@@ -94,7 +94,7 @@ const Publishers = () => {
                 </CardHeader>
                 <CardContent>
                   <p className="text-muted-foreground mb-4">
-                    Contact: {publisher.contactInfo || "No contact information available."}
+                    Contact: {publisher.email || publisher.address || "No contact information available."}
                   </p>
                   
                   <div className="flex justify-between">
