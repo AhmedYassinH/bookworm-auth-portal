@@ -3,12 +3,13 @@ import { BookResponseDTO } from "@/types/book";
 import BookCard from "./BookCard";
 
 interface BookGridProps {
-  books: BookResponseDTO[];
+  books: BookResponseDTO[] | undefined;
   onBorrow?: (bookId: number) => void;
 }
 
 const BookGrid = ({ books, onBorrow }: BookGridProps) => {
-  if (!books || books.length === 0) {
+  // Early return if books is undefined, null, or not an array
+  if (!books || !Array.isArray(books) || books.length === 0) {
     return (
       <div className="flex items-center justify-center h-40 bg-muted/20 rounded-lg">
         <p className="text-muted-foreground">No books found</p>
