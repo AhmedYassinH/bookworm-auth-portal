@@ -1,4 +1,3 @@
-
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { bookService } from "@/services/bookService";
@@ -7,6 +6,7 @@ import BookGrid from "@/components/books/BookGrid";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { ArrowRight, Book, BookOpen, Library } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Index = () => {
   // Fetch recent books
@@ -18,6 +18,8 @@ const Index = () => {
       pageSize: 5
     }),
   });
+
+  const { isAuthenticated } = useAuth();
 
   return (
     <Layout>
@@ -38,11 +40,13 @@ const Index = () => {
                   <BookOpen className="ml-2" size={18} />
                 </Link>
               </Button>
-              <Button asChild variant="outline" size="lg">
-                <Link to="/register">
-                  Create an Account
-                </Link>
-              </Button>
+              {!isAuthenticated && (
+                <Button asChild variant="outline" size="lg">
+                  <Link to="/register">
+                    Create an Account
+                  </Link>
+                </Button>
+              )}
             </div>
           </div>
         </div>
