@@ -1,4 +1,5 @@
 
+import { useState } from "react";
 import { BookResponseDTO } from "@/types/book";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -6,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Book, BookOpen, Users } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface BookCardProps {
   book: BookResponseDTO;
@@ -14,18 +16,31 @@ interface BookCardProps {
 
 const BookCard = ({ book, onBorrow }: BookCardProps) => {
   const { isAuthenticated } = useAuth();
-  
   const isAvailable = book.numberOfAvailableCopies > 0;
+  const [imageError, setImageError] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   
   return (
     <Card className="h-full flex flex-col overflow-hidden transition-all hover:shadow-md">
       <div className="relative aspect-[3/4] overflow-hidden bg-muted">
-        {book.imageURL ? (
-          <img 
-            src={book.imageURL} 
-            alt={book.title} 
-            className="object-cover w-full h-full"
-          />
+        {book.imageURL && !imageError ? (
+          <>
+            {isLoading && (
+              <div className="absolute inset-0">
+                <Skeleton className="w-full h-full" />
+              </div>
+            )}
+            <img 
+              src={book.imageURL} 
+              alt={book.title}
+              className={`object-cover w-full h-full transition-opacity duration-200 ${isLoading ? 'opacity-0' : 'opacity-100'}`}
+              onLoad={() => setIsLoading(false)}
+              onError={() => {
+                setImageError(true);
+                setIsLoading(false);
+              }}
+            />
+          </>
         ) : (
           <div className="flex items-center justify-center h-full bg-muted text-muted-foreground">
             <Book size={64} />
