@@ -20,6 +20,11 @@ const BookCard = ({ book, onBorrow }: BookCardProps) => {
   const [imageError, setImageError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   
+  // Ensure we have a valid book object
+  if (!book || !book.id) {
+    return null;
+  }
+  
   return (
     <Card className="h-full flex flex-col overflow-hidden transition-all hover:shadow-md">
       <div className="relative aspect-[3/4] overflow-hidden bg-muted">

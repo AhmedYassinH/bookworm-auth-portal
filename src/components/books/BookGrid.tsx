@@ -17,9 +17,18 @@ const BookGrid = ({ books, onBorrow }: BookGridProps) => {
     );
   }
 
+  // Filter out any invalid or duplicate books by ID
+  const uniqueBooks = books.reduce((acc: BookResponseDTO[], book) => {
+    // Only add the book if it's valid and not already in the array
+    if (book && book.id && !acc.some(b => b.id === book.id)) {
+      acc.push(book);
+    }
+    return acc;
+  }, []);
+
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-      {books.map(book => (
+      {uniqueBooks.map(book => (
         <BookCard key={book.id} book={book} onBorrow={onBorrow} />
       ))}
     </div>
