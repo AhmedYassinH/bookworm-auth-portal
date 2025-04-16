@@ -1,3 +1,4 @@
+
 import { apiRequest } from "./api";
 import { UserResponseDTO } from "@/types/user";
 import { Role } from "@/types/auth";
@@ -48,8 +49,33 @@ export const userService = {
   // Update a user
   updateUser: async (
     userId: number,
-    userData: FormData
+    userData: FormData,
+    userRole: Role
   ): Promise<UserResponseDTO> => {
+    // For regular users, remove credit and role fields to prevent 403 errors
+    if (userRole !== Role.Admin) {
+      // Create a new FormData object without the restricted fields
+      const filteredData = new FormData();
+      
+      // Copy allowed fields from the original FormData
+      for (const [key, value] of userData.entries()) {
+        // Skip credit and userRole fields for non-admin users
+        if (key !== 'Credit' && key !== 'UserRole') {
+          filteredData.append(key, value);
+        }
+      }
+      
+      return apiRequest<UserResponseDTO>({
+        method: "PUT",
+        url: USER_ENDPOINTS.UPDATE_USER(userId),
+        data: filteredData,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+    }
+    
+    // For admin users, send all fields
     return apiRequest<UserResponseDTO>({
       method: "PUT",
       url: USER_ENDPOINTS.UPDATE_USER(userId),

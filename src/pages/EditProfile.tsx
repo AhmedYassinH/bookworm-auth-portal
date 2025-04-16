@@ -1,15 +1,16 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { format } from "date-fns";
 import { Loader2, Save, ArrowLeft, Camera } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { userService } from "@/services/userService";
 import { useToast } from "@/hooks/use-toast";
 import { Sex } from "@/types/user";
+import { Role } from "@/types/auth";
 
 import Layout from "@/components/layout/Layout";
 import {
@@ -118,7 +119,8 @@ const EditProfile = () => {
       // Image is optional but needs to be sent as binary
       if (imageFile) formData.append("Image", imageFile);
 
-      return userService.updateUser(user.userId, formData);
+      // Pass the user role to the service so it can handle permissions correctly
+      return userService.updateUser(user.userId, formData, user.userRole as Role);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["user", user?.userId] });
@@ -128,13 +130,15 @@ const EditProfile = () => {
       });
       navigate("/profile");
     },
-    onError: (error: { response?: { data?: { message?: string } } }) => {
+    onError: (error: { response?: { data?: { message?: string; error?: { message?: string } } } }) => {
       console.error("Failed to update profile:", error);
+      const errorMessage = error?.response?.data?.error?.message || 
+                          error?.response?.data?.message || 
+                          "There was a problem updating your profile. Please try again.";
+      
       toast({
         title: "Update failed",
-        description:
-          error?.response?.data?.message ||
-          "There was a problem updating your profile. Please try again.",
+        description: errorMessage,
         variant: "destructive",
       });
     },

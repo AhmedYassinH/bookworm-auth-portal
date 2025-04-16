@@ -1,9 +1,10 @@
-import { useState, useEffect } from "react";
+
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { BookOpen, Eye, EyeOff, Loader2 } from "lucide-react";
+import { BookOpen, Eye, EyeOff, Loader2, UserCog } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -32,16 +33,10 @@ const Login = () => {
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      email: "admin@admin.com",
-      password: "StrongPassword123@",
+      email: "",
+      password: "",
     },
   });
-
-  useEffect(() => {
-    // Pre-fill form with admin credentials
-    form.setValue("email", "admin@admin.com");
-    form.setValue("password", "StrongPassword123@");
-  }, [form]);
 
   const onSubmit = async (data: z.infer<typeof loginSchema>) => {
     try {
@@ -54,6 +49,16 @@ const Login = () => {
     } catch (error) {
       console.error("Login failed:", error);
     }
+  };
+
+  const loginAsAdmin = () => {
+    form.setValue("email", "admin@admin.com");
+    form.setValue("password", "StrongPassword123@");
+    
+    toast({
+      title: "Admin credentials filled",
+      description: "You can now sign in as an administrator.",
+    });
   };
 
   return (
@@ -77,6 +82,18 @@ const Login = () => {
                 create a new account
               </Link>
             </p>
+          </div>
+
+          <div className="mt-4 mb-6">
+            <Button 
+              type="button" 
+              variant="outline"
+              className="w-full flex items-center"
+              onClick={loginAsAdmin}
+            >
+              <UserCog className="mr-2 h-4 w-4" />
+              Fill admin credentials
+            </Button>
           </div>
 
           <div className="mt-8">
