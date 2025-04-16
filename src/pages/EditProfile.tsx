@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -34,7 +33,6 @@ import {
 } from "@/components/ui/select";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-// Define schema for form validation
 const profileSchema = z.object({
   name: z.string().min(1, "Name is required"),
   email: z.string().email("Invalid email format"),
@@ -55,14 +53,12 @@ const EditProfile = () => {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
 
-  // Fetch user details
   const { data: profile, isLoading } = useQuery({
     queryKey: ["user", user?.userId],
     queryFn: () => userService.getUser(user?.userId || 0),
     enabled: !!user?.userId,
   });
 
-  // Initialize form with default values
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
@@ -76,7 +72,6 @@ const EditProfile = () => {
     },
   });
 
-  // Update form when profile data is loaded
   useEffect(() => {
     if (profile) {
       form.reset({
@@ -95,31 +90,25 @@ const EditProfile = () => {
     }
   }, [profile, form]);
 
-  // Mutation for updating profile
   const updateProfileMutation = useMutation({
     mutationFn: async (data: ProfileFormValues) => {
       if (!user?.userId) throw new Error("User ID not found");
 
       const formData = new FormData();
-      // Required fields
       formData.append("Name", data.name);
       formData.append("Email", data.email);
       formData.append("UserSex", data.userSex.toString());
 
-      // Optional fields - send empty string if not provided to match API schema
       formData.append("Bio", data.bio || "");
       formData.append("Address", data.address || "");
       formData.append("Phone", data.phone || "");
       formData.append("BirthDate", data.birthDate || "");
 
-      // Required for concurrency control
       if (profile?.id) formData.append("Id", profile.id.toString());
       if (profile?.timeStamp) formData.append("TimeStamp", profile.timeStamp);
 
-      // Image is optional but needs to be sent as binary
       if (imageFile) formData.append("Image", imageFile);
 
-      // Pass the user role to the service so it can handle permissions correctly
       return userService.updateUser(user.userId, formData, user.userRole as Role);
     },
     onSuccess: () => {
@@ -149,7 +138,6 @@ const EditProfile = () => {
       const file = e.target.files[0];
       setImageFile(file);
 
-      // Create a preview
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreview(reader.result as string);

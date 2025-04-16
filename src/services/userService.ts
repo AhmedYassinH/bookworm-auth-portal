@@ -65,6 +65,9 @@ export const userService = {
         }
       }
       
+      // Make sure to include the current UserRole in the request
+      filteredData.append('UserRole', userRole);
+      
       return apiRequest<UserResponseDTO>({
         method: "PUT",
         url: USER_ENDPOINTS.UPDATE_USER(userId),
