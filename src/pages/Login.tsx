@@ -1,10 +1,9 @@
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { BookOpen, Eye, EyeOff, Loader2, Database } from "lucide-react";
+import { BookOpen, Eye, EyeOff, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -17,8 +16,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/contexts/AuthContext";
 import { LoginUserRequestDTO } from "@/types/auth";
-import { dummyDataService } from "@/services/dummyDataService";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useToast } from "@/hooks/use-toast";
 
 const loginSchema = z.object({
@@ -30,17 +27,21 @@ const Login = () => {
   const { login, loading } = useAuth();
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
-  const [initializingData, setInitializingData] = useState(false);
-  const [dataInitialized, setDataInitialized] = useState(false);
   const { toast } = useToast();
 
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      email: "",
-      password: "",
+      email: "admin@admin.com",
+      password: "StrongPassword123@",
     },
   });
+
+  useEffect(() => {
+    // Pre-fill form with admin credentials
+    form.setValue("email", "admin@admin.com");
+    form.setValue("password", "StrongPassword123@");
+  }, [form]);
 
   const onSubmit = async (data: z.infer<typeof loginSchema>) => {
     try {
@@ -52,24 +53,6 @@ const Login = () => {
       navigate("/");
     } catch (error) {
       console.error("Login failed:", error);
-    }
-  };
-
-  const initializeDummyData = async () => {
-    setInitializingData(true);
-    try {
-      await dummyDataService.initializeData();
-      setDataInitialized(true);
-      form.setValue("email", "admin@bookworm.com");
-      form.setValue("password", "Admin123!");
-      toast({
-        title: "Dummy Data Initialized",
-        description: "You can now log in with the admin credentials that have been pre-filled in the form.",
-      });
-    } catch (error) {
-      console.error("Error initializing dummy data:", error);
-    } finally {
-      setInitializingData(false);
     }
   };
 
@@ -94,41 +77,6 @@ const Login = () => {
                 create a new account
               </Link>
             </p>
-          </div>
-
-          {dataInitialized && (
-            <Alert className="my-4 bg-green-50 border-green-200">
-              <AlertTitle className="text-green-800">Dummy data initialized!</AlertTitle>
-              <AlertDescription className="text-green-700">
-                Use these admin credentials to log in:
-                <div className="mt-2 bg-white p-2 rounded border border-green-200">
-                  <div><strong>Email:</strong> admin@bookworm.com</div>
-                  <div><strong>Password:</strong> Admin123!</div>
-                </div>
-              </AlertDescription>
-            </Alert>
-          )}
-
-          <div className="mt-4 mb-4">
-            <Button 
-              type="button" 
-              variant="outline"
-              className="w-full flex gap-2"
-              onClick={initializeDummyData}
-              disabled={initializingData || dataInitialized}
-            >
-              {initializingData ? (
-                <>
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  Initializing data...
-                </>
-              ) : (
-                <>
-                  <Database className="h-4 w-4" />
-                  {dataInitialized ? "Dummy data initialized" : "Initialize dummy data"}
-                </>
-              )}
-            </Button>
           </div>
 
           <div className="mt-8">
